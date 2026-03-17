@@ -67,9 +67,9 @@ http://localhost:8080
 ## 🔑 토큰 요청 (curl)
 
 ```bash
-curl -u client:secret \\
--X POST http://localhost:8080/oauth2/token \\
--H "Content-Type: application/x-www-form-urlencoded" \\
+curl -u client:secret \
+-X POST http://localhost:8080/oauth2/token \
+-H "Content-Type: application/x-www-form-urlencoded" \
 -d "grant_type=urn:ietf:params:oauth:grant-type:password&username=user&password=1234&scope=read"
 ```
 
