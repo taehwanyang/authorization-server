@@ -3,6 +3,7 @@ package com.ythwork.authorizationserver.config;
 import com.ythwork.authorizationserver.security.password.PasswordGrantAuthenticationConverter;
 import com.ythwork.authorizationserver.security.password.PasswordGrantAuthenticationProvider;
 import com.ythwork.authorizationserver.security.password.PasswordGrantAuthenticationToken;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -23,6 +24,9 @@ import java.util.UUID;
 
 @Configuration
 public class SecurityConfig {
+
+    @Value("${authorization.server.issuer}")
+    private String issuer;
 
     @Bean
     @Order(1)
@@ -68,7 +72,7 @@ public class SecurityConfig {
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
-                .issuer("http://localhost:8080")
+                .issuer(issuer)
                 .build();
     }
 }
