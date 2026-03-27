@@ -4,12 +4,14 @@ import com.ythwork.authorizationserver.security.password.PasswordGrantAuthentica
 import com.ythwork.authorizationserver.security.password.PasswordGrantAuthenticationProvider;
 import com.ythwork.authorizationserver.security.password.PasswordGrantAuthenticationToken;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.server.authorization.InMemoryOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
@@ -48,6 +50,20 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth.anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/oauth2/token"));
+
+        return http.build();
+    }
+
+    @Bean
+    @Order(2)
+    public SecurityFilterChain actuatorSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .securityMatcher(EndpointRequest.toAnyEndpoint())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(EndpointRequest.to("health", "prometheus")).permitAll()
+                        .anyRequest().denyAll()
+                )
+                .csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

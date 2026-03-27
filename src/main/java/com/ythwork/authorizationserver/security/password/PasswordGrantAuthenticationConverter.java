@@ -16,6 +16,8 @@ import java.util.Set;
 
 public class PasswordGrantAuthenticationConverter implements AuthenticationConverter {
 
+    private static final Logger log = LoggerFactory.getLogger(PasswordGrantAuthenticationConverter.class);
+
     private static final String GRANT_TYPE = "urn:ietf:params:oauth:grant-type:password";
 
     @Override
@@ -26,8 +28,11 @@ public class PasswordGrantAuthenticationConverter implements AuthenticationConve
             return null;
         }
 
+        log.debug("Password grant request received");
+
         Authentication clientPrincipal = SecurityContextHolder.getContext().getAuthentication();
         if (!(clientPrincipal instanceof OAuth2ClientAuthenticationToken oAuth2ClientAuthenticationToken)) {
+            log.warn("Client authentication missing or invalid for password grant");
             return null;
         }
 
@@ -43,6 +48,10 @@ public class PasswordGrantAuthenticationConverter implements AuthenticationConve
         if (StringUtils.hasText(scope)) {
             scopes.addAll(Arrays.asList(scope.split(" ")));
         }
+
+        log.info("Password grant authentication attempt: username={}, scopes={}",
+                username,
+                scopes);
 
         return new PasswordGrantAuthenticationToken(
                 oAuth2ClientAuthenticationToken,
