@@ -12,8 +12,12 @@ RUN ./gradlew bootJar --no-daemon
 FROM eclipse-temurin:17-jre
 WORKDIR /app
 
-EXPOSE 8080
+RUN groupadd -g 10001 appgroup && \
+    useradd -u 10001 -g 10001 -m -s /usr/sbin/nologin appuser
 
 COPY --from=builder /app/build/libs/*.jar app.jar
+RUN chown -R 10001:10001 /app
+
+EXPOSE 8080
 
 ENTRYPOINT ["java", "-jar", "/app/app.jar"]
